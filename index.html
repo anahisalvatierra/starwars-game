@@ -12,9 +12,7 @@
 <body>
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 <script>
-// ============================================================
-//  UTILIDADES CANVAS — generan texturas sin archivos externos
-// ============================================================
+
 
 function crearGraficoEspacio() {
   const c = document.createElement('canvas');
@@ -26,7 +24,7 @@ function crearGraficoEspacio() {
     const s = Math.random() * 2 + 0.5;
     ctx.fillRect(Math.random()*800, Math.random()*600, s, s);
   }
-  // nebulosa decorativa
+  
   const g = ctx.createRadialGradient(600,150,0,600,150,180);
   g.addColorStop(0, 'rgba(80,0,160,0.18)');
   g.addColorStop(1, 'rgba(0,0,0,0)');
@@ -38,7 +36,7 @@ function crearGraficoXWing8bit() {
   const c = document.createElement('canvas');
   c.width = 64; c.height = 64;
   const ctx = c.getContext('2d');
-  // Pixel art 8×8 escalado 8×
+  
   const pixels = [
     '00000100',
     '00001100',
@@ -54,7 +52,7 @@ function crearGraficoXWing8bit() {
     '00010000','00011000','11111100','01111110',
     '01111110','11111100','00011000','00010000'
   ];
-  // cuerpo
+  
   const body = [
     [0,'00000100'],[0,'00001100'],[0,'11111110'],[0,'11111111'],
     [0,'11111111'],[0,'11111110'],[0,'00001100'],[0,'00000100'],
@@ -67,9 +65,9 @@ function crearGraficoXWing8bit() {
       }
     });
   });
-  // detalle cabina
+  
   ctx.fillStyle = '#00e5ff'; ctx.fillRect(24,24,16,16);
-  // motores
+ 
   ctx.fillStyle = '#ff8800'; ctx.fillRect(0,24,8,8); ctx.fillRect(56,24,8,8);
   return c;
 }
@@ -78,15 +76,15 @@ function crearGraficoTie8bit() {
   const c = document.createElement('canvas');
   c.width = 64; c.height = 64;
   const ctx = c.getContext('2d');
-  // Paneles solares hexagonales 8-bit
+  
   ctx.fillStyle = '#1a1a2e';
   ctx.fillRect(0,8,16,48); ctx.fillRect(48,8,16,48);
-  // detalles paneles
+ 
   ctx.fillStyle = '#16213e';
   for (let i=0;i<6;i++) { ctx.fillRect(2,8+i*8,12,1); ctx.fillRect(50,8+i*8,12,1); }
-  // soporte
+  
   ctx.fillStyle = '#4a5568'; ctx.fillRect(16,28,32,8);
-  // cabina
+  
   ctx.fillStyle = '#718096';
   ctx.beginPath(); ctx.arc(32,32,12,0,Math.PI*2); ctx.fill();
   ctx.fillStyle = '#00ff41';
@@ -129,22 +127,22 @@ function crearGraficoEstrellaMuerte() {
   const c = document.createElement('canvas');
   c.width = 128; c.height = 128;
   const ctx = c.getContext('2d');
-  // Esfera gris
+  
   const g = ctx.createRadialGradient(48,42,0,64,64,62);
   g.addColorStop(0,'#aaaaaa'); g.addColorStop(0.6,'#666666'); g.addColorStop(1,'#222222');
   ctx.fillStyle = g;
   ctx.beginPath(); ctx.arc(64,64,62,0,Math.PI*2); ctx.fill();
-  // línea ecuatorial
+  
   ctx.strokeStyle='#888'; ctx.lineWidth=3;
   ctx.beginPath(); ctx.moveTo(2,64); ctx.lineTo(126,64); ctx.stroke();
-  // supercañón
+ 
   ctx.fillStyle='#111';
   ctx.beginPath(); ctx.arc(40,40,20,0,Math.PI*2); ctx.fill();
   ctx.fillStyle='#333';
   ctx.beginPath(); ctx.arc(40,40,14,0,Math.PI*2); ctx.fill();
   ctx.fillStyle='#00ff88';
   ctx.beginPath(); ctx.arc(40,40,7,0,Math.PI*2); ctx.fill();
-  // detalles superficie
+  
   ctx.strokeStyle='#555'; ctx.lineWidth=1;
   for (let i=0;i<8;i++) {
     ctx.beginPath();
@@ -165,9 +163,6 @@ function crearGraficoBarraVida(w,h,pct,color) {
   return c;
 }
 
-// ============================================================
-//  ESCENA: MENÚ PRINCIPAL
-// ============================================================
 class MenuScene extends Phaser.Scene {
   constructor() { super('MenuScene'); }
 
@@ -185,7 +180,7 @@ class MenuScene extends Phaser.Scene {
   create() {
     this.add.image(400,300,'espacio');
 
-    // Título animado
+   
     const titulo = this.add.text(400,100,'STAR WARS', {
       fontSize:'64px', fill:'#FFE81F', fontFamily:'Courier New', fontStyle:'bold',
       stroke:'#a08000', strokeThickness:6
@@ -196,16 +191,16 @@ class MenuScene extends Phaser.Scene {
       fontSize:'22px', fill:'#ffffff', fontFamily:'Courier New'
     }).setOrigin(0.5);
 
-    // Naves decorativas
+   
     const xw = this.add.image(240,290,'xwing').setScale(2);
     const ti = this.add.image(560,290,'tie').setScale(2);
     this.tweens.add({ targets:xw, y:280, duration:1200, yoyo:true, repeat:-1 });
     this.tweens.add({ targets:ti, y:300, duration:1400, yoyo:true, repeat:-1 });
 
-    // Estrella de la Muerte
+    
     this.add.image(400,310,'deathstar').setScale(0.55).setAlpha(0.6);
 
-    // Instrucciones
+    
     const opciones = [
       '[ ENTER ] — 1 Jugador',
       '[ P ]     — 2 Jugadores',
@@ -229,9 +224,7 @@ class MenuScene extends Phaser.Scene {
   }
 }
 
-// ============================================================
-//  ESCENA: JUEGO PRINCIPAL
-// ============================================================
+
 class GameScene extends Phaser.Scene {
   constructor() { super('GameScene'); }
 
@@ -239,26 +232,26 @@ class GameScene extends Phaser.Scene {
     this.numJugadores = data.players || 1;
     this.puntuacion   = 0;
     this.juegoTerminado = false;
-    this.deathStarHP  = 5;          // disparos para destruir la Estrella
-    this.tiempoLimite = 60000;      // 60 seg antes de que llegue la Estrella
+    this.deathStarHP  = 5;          
+    this.tiempoLimite = 60000;      
   }
 
   create() {
-    // ── Fondo ──────────────────────────────────────────────
+   
     this.fondo = this.add.tileSprite(400,300,800,600,'espacio');
 
-    // ── Estrella de la Muerte (avanza desde la derecha) ────
+    
     this.deathStar = this.physics.add.image(1000,300,'deathstar').setScale(0.6);
     this.deathStar.setVelocityX(-40);
     this.deathStar.setImmovable(true);
 
-    // ── Jugador 1 — X-Wing ─────────────────────────────────
+    
     this.p1 = this.physics.add.sprite(150,300,'xwing').setScale(1.6);
     this.p1.setCollideWorldBounds(true);
     this.p1.hp = 3; this.p1.maxHp = 3;
     this.p1.lastShot = 0;
 
-    // ── Jugador 2 — Tie controlado (solo en modo 2P) ────────
+    
     if (this.numJugadores === 2) {
       this.p2 = this.physics.add.sprite(650,300,'tie').setScale(1.6);
       this.p2.setCollideWorldBounds(true);
@@ -267,25 +260,25 @@ class GameScene extends Phaser.Scene {
       this.teclasP2 = this.input.keyboard.addKeys({ up:'W', down:'S', left:'A', right:'D', fire:'SPACE' });
     }
 
-    // ── Controles P1 ────────────────────────────────────────
+   
     this.cursors  = this.input.keyboard.createCursorKeys();
     this.fireP1   = this.input.keyboard.addKey('Z');
 
-    // ── Grupos ──────────────────────────────────────────────
+   
     this.lasersP1  = this.physics.add.group();
     this.lasersP2  = this.physics.add.group();
     this.enemigos  = this.physics.add.group();
     this.explosiones = this.add.group();
 
-    // ── Spawn de enemigos TIE (CPU) ──────────────────────────
+   
     this.time.addEvent({ delay:2000, callback:this.spawnEnemigo, callbackScope:this, loop:true });
 
-    // ── HUD ─────────────────────────────────────────────────
+    
     this.txtScore  = this.add.text(16,16,'Puntos: 0',{ fontSize:'18px', fill:'#fff', fontFamily:'Courier New' });
     this.txtTimer  = this.add.text(400,16,'60s',{ fontSize:'18px', fill:'#FFE81F', fontFamily:'Courier New' }).setOrigin(0.5,0);
     this.txtDSHP   = this.add.text(650,16,'Estrella ★★★★★',{ fontSize:'14px', fill:'#ff4444', fontFamily:'Courier New' });
 
-    // barras de vida (canvas dinámicos)
+    
     this.sprHP1 = this.add.image(90,580,'espacio').setAlpha(0); // placeholder
     this.add.text(16,568,'P1',{ fontSize:'13px', fill:'#00e5ff', fontFamily:'Courier New' });
     if (this.numJugadores===2) {
@@ -293,7 +286,7 @@ class GameScene extends Phaser.Scene {
     }
     this.actualizarBarrasHP();
 
-    // ── Colisiones ──────────────────────────────────────────
+    
     this.physics.add.overlap(this.lasersP1, this.enemigos,   this.laserHitEnemigo,  null, this);
     this.physics.add.overlap(this.lasersP1, this.deathStar,  this.laserHitDeathStar,null, this);
     this.physics.add.overlap(this.enemigos, this.p1,         this.enemigoHitJugador,null, this);
@@ -304,7 +297,7 @@ class GameScene extends Phaser.Scene {
       this.physics.add.overlap(this.enemigos, this.p2,        this.enemigoHitJugador,null, this);
     }
 
-    // ── Timer cuenta regresiva ───────────────────────────────
+    
     this.tiempoRestante = 60;
     this.time.addEvent({ delay:1000, callback:()=>{
       if (this.juegoTerminado) return;
@@ -318,10 +311,10 @@ class GameScene extends Phaser.Scene {
   update(time) {
     if (this.juegoTerminado) return;
 
-    // Scroll fondo
+   
     this.fondo.tilePositionX += 2;
 
-    // ── Movimiento P1 ────────────────────────────────────────
+   
     this.p1.setVelocity(0);
     if (this.cursors.left.isDown)  this.p1.setVelocityX(-280);
     if (this.cursors.right.isDown) this.p1.setVelocityX(280);
@@ -334,7 +327,7 @@ class GameScene extends Phaser.Scene {
       this.p1.lastShot = time;
     }
 
-    // ── Movimiento P2 ────────────────────────────────────────
+    
     if (this.numJugadores===2 && this.p2 && this.p2.active) {
       this.p2.setVelocity(0);
       if (this.teclasP2.left.isDown)  this.p2.setVelocityX(-280);
@@ -348,21 +341,21 @@ class GameScene extends Phaser.Scene {
       }
     }
 
-    // Destruir láseres fuera de pantalla
+   
     [this.lasersP1, this.lasersP2].forEach(grupo => {
       grupo.children.iterate(l => { if(l && (l.x>820||l.x<-20)) l.destroy(); });
     });
 
-    // Destruir enemigos fuera de pantalla
+    
     this.enemigos.children.iterate(e => { if(e && e.x < -60) e.destroy(); });
 
-    // Verificar si la Estrella llegó al centro
+    
     if (this.deathStar.x < 200) {
       this.terminarJuego('pierde','¡El Imperio ganó!\nLa Estrella de la Muerte llegó');
     }
   }
 
-  // ── Spawn enemigo TIE ───────────────────────────────────
+  
   spawnEnemigo() {
     if (this.juegoTerminado) return;
     const y = Phaser.Math.Between(60, 540);
@@ -371,16 +364,16 @@ class GameScene extends Phaser.Scene {
     e.hp = 1;
   }
 
-  // ── Disparo ─────────────────────────────────────────────
+  
   disparar(jugador, grupo, textura, velX) {
     const laser = grupo.create(jugador.x + (velX>0?30:-30), jugador.y, textura);
     laser.setVelocityX(velX);
     laser.setScale(1.2);
-    // sonido sintético (AudioContext)
+    
     this.sonidoLaser();
   }
 
-  // ── Impacto láser → enemigo ─────────────────────────────
+  
   laserHitEnemigo(laser, enemigo) {
     laser.destroy();
     enemigo.hp--;
@@ -392,7 +385,7 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  // ── Impacto láser → Estrella de la Muerte ──────────────
+ 
   laserHitDeathStar(laser, ds) {
     laser.destroy();
     this.deathStarHP--;
@@ -408,7 +401,7 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  // ── Enemigo toca jugador ─────────────────────────────────
+ 
   enemigoHitJugador(enemigo, jugador) {
     this.crearExplosion(enemigo.x, enemigo.y);
     enemigo.destroy();
@@ -427,7 +420,7 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  // ── Animación explosión ─────────────────────────────────
+
   crearExplosion(x, y, escala=1.5) {
     let frame = 0;
     const img = this.add.image(x,y,'exp0').setScale(escala);
@@ -439,7 +432,7 @@ class GameScene extends Phaser.Scene {
     this.sonidoExplosion();
   }
 
-  // ── Barras de vida (canvas dinámicos) ────────────────────
+  
   actualizarBarrasHP() {
     const W=120, H=14;
     // P1
@@ -460,7 +453,7 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  // ── Sonidos sintéticos (Web Audio API) ───────────────────
+  
   sonidoLaser() {
     try {
       const ac = new (window.AudioContext||window.webkitAudioContext)();
@@ -490,7 +483,7 @@ class GameScene extends Phaser.Scene {
     } catch(e){}
   }
 
-  // ── Fin del juego ────────────────────────────────────────
+  
   terminarJuego(resultado, mensaje) {
     if (this.juegoTerminado) return;
     this.juegoTerminado = true;
@@ -514,9 +507,7 @@ class GameScene extends Phaser.Scene {
   }
 }
 
-// ============================================================
-//  CONFIGURACIÓN PHASER
-// ============================================================
+
 const config = {
   type: Phaser.AUTO,
   width: 800,
