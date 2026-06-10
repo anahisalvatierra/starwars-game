@@ -12,7 +12,9 @@
 <body>
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 <script>
-
+// ============================================================
+//  UTILIDADES CANVAS — generan texturas sin archivos externos
+// ============================================================
 
 function crearGraficoEspacio() {
   const c = document.createElement('canvas');
@@ -24,7 +26,7 @@ function crearGraficoEspacio() {
     const s = Math.random() * 2 + 0.5;
     ctx.fillRect(Math.random()*800, Math.random()*600, s, s);
   }
-  
+  // nebulosa decorativa
   const g = ctx.createRadialGradient(600,150,0,600,150,180);
   g.addColorStop(0, 'rgba(80,0,160,0.18)');
   g.addColorStop(1, 'rgba(0,0,0,0)');
@@ -34,63 +36,143 @@ function crearGraficoEspacio() {
 
 function crearGraficoXWing8bit() {
   const c = document.createElement('canvas');
-  c.width = 64; c.height = 64;
+  c.width = 80; c.height = 80;
   const ctx = c.getContext('2d');
-  
-  const pixels = [
-    '00000100',
-    '00001100',
-    '11111110',
-    '11111111',
-    '11111111',
-    '11111110',
-    '00001100',
-    '00000100',
-  ];
-  const pal = { '0': null, '1': '#dcdcdc', '2': '#ff4500', '3': '#00e5ff', '4': '#ff0000' };
-  const map8 = [
-    '00010000','00011000','11111100','01111110',
-    '01111110','11111100','00011000','00010000'
-  ];
-  
-  const body = [
-    [0,'00000100'],[0,'00001100'],[0,'11111110'],[0,'11111111'],
-    [0,'11111111'],[0,'11111110'],[0,'00001100'],[0,'00000100'],
-  ];
-  body.forEach(([_,row], ry) => {
-    [...row].forEach((px, rx) => {
-      if (px === '1') {
-        ctx.fillStyle = rx === 3 ? '#ff4500' : '#dcdcdc';
-        ctx.fillRect(rx*8, ry*8, 8, 8);
-      }
-    });
-  });
-  
-  ctx.fillStyle = '#00e5ff'; ctx.fillRect(24,24,16,16);
- 
-  ctx.fillStyle = '#ff8800'; ctx.fillRect(0,24,8,8); ctx.fillRect(56,24,8,8);
+  ctx.save();
+  ctx.translate(40,40);
+  ctx.rotate(Math.PI / 2); // apunta hacia la derecha
+
+  // Fuselaje aerodinámico
+  ctx.fillStyle = '#d0d0d0';
+  ctx.beginPath();
+  ctx.moveTo(0,-36);                          // punta morro
+  ctx.bezierCurveTo(8,-36, 12,-24, 12,-10);
+  ctx.lineTo(12, 20);
+  ctx.bezierCurveTo(12,28, 6,32, 0,32);
+  ctx.bezierCurveTo(-6,32,-12,28,-12,20);
+  ctx.lineTo(-12,-10);
+  ctx.bezierCurveTo(-12,-24,-8,-36, 0,-36);
+  ctx.closePath(); ctx.fill();
+
+  // sombra lateral fuselaje
+  ctx.fillStyle = '#aaaaaa';
+  ctx.beginPath();
+  ctx.moveTo(0,-36); ctx.bezierCurveTo(8,-36,12,-24,12,-10);
+  ctx.lineTo(12,20); ctx.bezierCurveTo(12,28,6,32,0,32); ctx.lineTo(0,-36); ctx.closePath(); ctx.fill();
+
+  // Alas en X (4 alas)
+  ctx.fillStyle = '#b8b8b8';
+  // ala sup-izq
+  ctx.beginPath(); ctx.moveTo(-8,-8); ctx.lineTo(-36,-28); ctx.lineTo(-38,-20); ctx.lineTo(-10,0); ctx.closePath(); ctx.fill();
+  // ala inf-izq
+  ctx.beginPath(); ctx.moveTo(-8,8);  ctx.lineTo(-38,28);  ctx.lineTo(-36,36);  ctx.lineTo(-10,2);  ctx.closePath(); ctx.fill();
+  // ala sup-der
+  ctx.beginPath(); ctx.moveTo(8,-8);  ctx.lineTo(36,-28);  ctx.lineTo(38,-20);  ctx.lineTo(10,0);   ctx.closePath(); ctx.fill();
+  // ala inf-der
+  ctx.beginPath(); ctx.moveTo(8,8);   ctx.lineTo(38,28);   ctx.lineTo(36,36);   ctx.lineTo(10,2);   ctx.closePath(); ctx.fill();
+
+  // Franjas rojas en alas
+  ctx.fillStyle = '#cc2200';
+  ctx.save(); ctx.rotate(-Math.PI/6);
+  ctx.fillRect(-40,-2,30,3); ctx.fillRect(10,-2,30,3);
+  ctx.restore();
+  ctx.save(); ctx.rotate(Math.PI/6);
+  ctx.fillRect(-40,-2,30,3); ctx.fillRect(10,-2,30,3);
+  ctx.restore();
+
+  // Cañones láser (4 puntas)
+  ctx.fillStyle = '#888';
+  ctx.fillRect(-40,-30,6,3); ctx.fillRect(-40,28,6,3);
+  ctx.fillRect(34,-30,6,3);  ctx.fillRect(34,28,6,3);
+  ctx.fillStyle = '#00e5ff';
+  ctx.fillRect(-44,-30,4,2); ctx.fillRect(-44,29,4,2);
+  ctx.fillRect(40,-30,4,2);  ctx.fillRect(40,29,4,2);
+
+  // Cabina ovalada con reflejo
+  ctx.fillStyle = '#0e4060';
+  ctx.beginPath(); ctx.ellipse(0,-12,6,9,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#00cfff';
+  ctx.beginPath(); ctx.ellipse(0,-12,4,7,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.beginPath(); ctx.ellipse(-1,-15,1.5,3,0,0,Math.PI*2); ctx.fill();
+
+  // Motor trasero
+  ctx.fillStyle = '#555';
+  ctx.beginPath(); ctx.ellipse(0,30,6,4,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#ff8800';
+  ctx.beginPath(); ctx.ellipse(0,32,4,3,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#ffee00';
+  ctx.beginPath(); ctx.ellipse(0,34,2,2,0,0,Math.PI*2); ctx.fill();
+
+  ctx.restore();
   return c;
 }
 
 function crearGraficoTie8bit() {
   const c = document.createElement('canvas');
-  c.width = 64; c.height = 64;
+  c.width = 80; c.height = 80;
   const ctx = c.getContext('2d');
-  
-  ctx.fillStyle = '#1a1a2e';
-  ctx.fillRect(0,8,16,48); ctx.fillRect(48,8,16,48);
- 
-  ctx.fillStyle = '#16213e';
-  for (let i=0;i<6;i++) { ctx.fillRect(2,8+i*8,12,1); ctx.fillRect(50,8+i*8,12,1); }
-  
-  ctx.fillStyle = '#4a5568'; ctx.fillRect(16,28,32,8);
-  
-  ctx.fillStyle = '#718096';
-  ctx.beginPath(); ctx.arc(32,32,12,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#00ff41';
-  ctx.beginPath(); ctx.arc(32,32,6,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#003300';
-  ctx.beginPath(); ctx.arc(32,32,3,0,Math.PI*2); ctx.fill();
+  ctx.save();
+  ctx.translate(40, 40);
+
+  // Panel solar izquierdo (hexagonal)
+  ctx.fillStyle = '#1a1f35';
+  ctx.beginPath();
+  ctx.moveTo(-40,-28); ctx.lineTo(-22,-36); ctx.lineTo(-12,-36);
+  ctx.lineTo(-12,36);  ctx.lineTo(-22,36);  ctx.lineTo(-40,28);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#2e3a5c'; ctx.lineWidth = 1.2;
+  for (let i=-3;i<=3;i++) { ctx.beginPath(); ctx.moveTo(-40,i*9); ctx.lineTo(-12,i*9); ctx.stroke(); }
+  for (let i=0;i<3;i++)   { ctx.beginPath(); ctx.moveTo(-12-i*9,-36+i*4); ctx.lineTo(-12-i*9,36-i*4); ctx.stroke(); }
+  ctx.strokeStyle = '#3a4a70'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(-40,-28); ctx.lineTo(-22,-36); ctx.lineTo(-12,-36);
+  ctx.lineTo(-12,36); ctx.lineTo(-22,36); ctx.lineTo(-40,28); ctx.closePath(); ctx.stroke();
+
+  // Panel solar derecho (espejo)
+  ctx.fillStyle = '#1a1f35';
+  ctx.beginPath();
+  ctx.moveTo(40,-28); ctx.lineTo(22,-36); ctx.lineTo(12,-36);
+  ctx.lineTo(12,36);  ctx.lineTo(22,36);  ctx.lineTo(40,28);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#2e3a5c'; ctx.lineWidth = 1.2;
+  for (let i=-3;i<=3;i++) { ctx.beginPath(); ctx.moveTo(12,i*9); ctx.lineTo(40,i*9); ctx.stroke(); }
+  for (let i=0;i<3;i++)   { ctx.beginPath(); ctx.moveTo(12+i*9,-36+i*4); ctx.lineTo(12+i*9,36-i*4); ctx.stroke(); }
+  ctx.strokeStyle = '#3a4a70'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(40,-28); ctx.lineTo(22,-36); ctx.lineTo(12,-36);
+  ctx.lineTo(12,36); ctx.lineTo(22,36); ctx.lineTo(40,28); ctx.closePath(); ctx.stroke();
+
+  // Brazos de soporte
+  ctx.fillStyle = '#4a5060';
+  ctx.fillRect(-12,-5,24,10);
+  ctx.fillStyle = '#666';
+  ctx.beginPath(); ctx.arc(-8,0,2,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(8,0,2,0,Math.PI*2); ctx.fill();
+
+  // Cabina esférica con gradiente
+  ctx.fillStyle = '#333';
+  ctx.beginPath(); ctx.arc(1,1,15,0,Math.PI*2); ctx.fill();
+  const gCab = ctx.createRadialGradient(-4,-5,1,0,0,15);
+  gCab.addColorStop(0,'#8899aa'); gCab.addColorStop(0.5,'#55667a'); gCab.addColorStop(1,'#222833');
+  ctx.fillStyle = gCab;
+  ctx.beginPath(); ctx.arc(0,0,15,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#667788'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(0,0,15,0,Math.PI*2); ctx.stroke();
+
+  // Visor hexagonal
+  ctx.fillStyle = '#001800';
+  ctx.beginPath();
+  for (let i=0;i<6;i++) { const a=i*Math.PI/3-Math.PI/6; i===0?ctx.moveTo(Math.cos(a)*9,Math.sin(a)*9):ctx.lineTo(Math.cos(a)*9,Math.sin(a)*9); }
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#00cc44';
+  ctx.beginPath();
+  for (let i=0;i<6;i++) { const a=i*Math.PI/3-Math.PI/6; i===0?ctx.moveTo(Math.cos(a)*7,Math.sin(a)*7):ctx.lineTo(Math.cos(a)*7,Math.sin(a)*7); }
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#88ffaa';
+  ctx.beginPath(); ctx.arc(-3,-3,2.5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.beginPath(); ctx.ellipse(-5,-6,5,3,-0.5,0,Math.PI*2); ctx.fill();
+
+  ctx.restore();
   return c;
 }
 
@@ -127,22 +209,22 @@ function crearGraficoEstrellaMuerte() {
   const c = document.createElement('canvas');
   c.width = 128; c.height = 128;
   const ctx = c.getContext('2d');
-  
+  // Esfera gris
   const g = ctx.createRadialGradient(48,42,0,64,64,62);
   g.addColorStop(0,'#aaaaaa'); g.addColorStop(0.6,'#666666'); g.addColorStop(1,'#222222');
   ctx.fillStyle = g;
   ctx.beginPath(); ctx.arc(64,64,62,0,Math.PI*2); ctx.fill();
-  
+  // línea ecuatorial
   ctx.strokeStyle='#888'; ctx.lineWidth=3;
   ctx.beginPath(); ctx.moveTo(2,64); ctx.lineTo(126,64); ctx.stroke();
- 
+  // supercañón
   ctx.fillStyle='#111';
   ctx.beginPath(); ctx.arc(40,40,20,0,Math.PI*2); ctx.fill();
   ctx.fillStyle='#333';
   ctx.beginPath(); ctx.arc(40,40,14,0,Math.PI*2); ctx.fill();
   ctx.fillStyle='#00ff88';
   ctx.beginPath(); ctx.arc(40,40,7,0,Math.PI*2); ctx.fill();
-  
+  // detalles superficie
   ctx.strokeStyle='#555'; ctx.lineWidth=1;
   for (let i=0;i<8;i++) {
     ctx.beginPath();
@@ -163,6 +245,9 @@ function crearGraficoBarraVida(w,h,pct,color) {
   return c;
 }
 
+// ============================================================
+//  ESCENA: MENÚ PRINCIPAL
+// ============================================================
 class MenuScene extends Phaser.Scene {
   constructor() { super('MenuScene'); }
 
@@ -170,6 +255,7 @@ class MenuScene extends Phaser.Scene {
     this.textures.addCanvas('espacio',    crearGraficoEspacio());
     this.textures.addCanvas('xwing',      crearGraficoXWing8bit());
     this.textures.addCanvas('tie',        crearGraficoTie8bit());
+    this.textures.addCanvas('tie_enemy',  crearGraficoTie8bit());
     this.textures.addCanvas('laser1',     crearGraficoLaser('#00e5ff'));
     this.textures.addCanvas('laser2',     crearGraficoLaser('#ff4500'));
     this.textures.addCanvas('deathstar',  crearGraficoEstrellaMuerte());
@@ -180,7 +266,7 @@ class MenuScene extends Phaser.Scene {
   create() {
     this.add.image(400,300,'espacio');
 
-   
+    // Título animado
     const titulo = this.add.text(400,100,'STAR WARS', {
       fontSize:'64px', fill:'#FFE81F', fontFamily:'Courier New', fontStyle:'bold',
       stroke:'#a08000', strokeThickness:6
@@ -191,16 +277,16 @@ class MenuScene extends Phaser.Scene {
       fontSize:'22px', fill:'#ffffff', fontFamily:'Courier New'
     }).setOrigin(0.5);
 
-   
+    // Naves decorativas
     const xw = this.add.image(240,290,'xwing').setScale(2);
     const ti = this.add.image(560,290,'tie').setScale(2);
     this.tweens.add({ targets:xw, y:280, duration:1200, yoyo:true, repeat:-1 });
     this.tweens.add({ targets:ti, y:300, duration:1400, yoyo:true, repeat:-1 });
 
-    
+    // Estrella de la Muerte
     this.add.image(400,310,'deathstar').setScale(0.55).setAlpha(0.6);
 
-    
+    // Instrucciones
     const opciones = [
       '[ ENTER ] — 1 Jugador',
       '[ P ]     — 2 Jugadores',
@@ -224,7 +310,9 @@ class MenuScene extends Phaser.Scene {
   }
 }
 
-
+// ============================================================
+//  ESCENA: JUEGO PRINCIPAL
+// ============================================================
 class GameScene extends Phaser.Scene {
   constructor() { super('GameScene'); }
 
@@ -232,53 +320,62 @@ class GameScene extends Phaser.Scene {
     this.numJugadores = data.players || 1;
     this.puntuacion   = 0;
     this.juegoTerminado = false;
-    this.deathStarHP  = 5;          
-    this.tiempoLimite = 60000;      
+    this.deathStarHP  = 5;          // disparos para destruir la Estrella
+    this.tiempoLimite = 60000;      // 60 seg antes de que llegue la Estrella
   }
 
   create() {
-   
+    // ── Fondo ──────────────────────────────────────────────
     this.fondo = this.add.tileSprite(400,300,800,600,'espacio');
 
-    
+    // ── Estrella de la Muerte (avanza desde la derecha) ────
     this.deathStar = this.physics.add.image(1000,300,'deathstar').setScale(0.6);
     this.deathStar.setVelocityX(-40);
     this.deathStar.setImmovable(true);
 
-    
+    // ── Jugador 1 — X-Wing ─────────────────────────────────
     this.p1 = this.physics.add.sprite(150,300,'xwing').setScale(1.6);
     this.p1.setCollideWorldBounds(true);
     this.p1.hp = 3; this.p1.maxHp = 3;
     this.p1.lastShot = 0;
 
-    
+    // ── Jugador 2 — Tie controlado (solo en modo 2P) ────────
     if (this.numJugadores === 2) {
-      this.p2 = this.physics.add.sprite(650,300,'tie').setScale(1.6);
+      // P2 aparece debajo de P1, en el lado izquierdo (no donde spawnan enemigos)
+      this.p2 = this.physics.add.sprite(150,450,'tie').setScale(1.6);
       this.p2.setCollideWorldBounds(true);
       this.p2.hp = 3; this.p2.maxHp = 3;
       this.p2.lastShot = 0;
       this.teclasP2 = this.input.keyboard.addKeys({ up:'W', down:'S', left:'A', right:'D', fire:'SPACE' });
+      // Etiqueta visual para distinguir P2
+      this.txtP2 = this.add.text(150,480,'P2',{
+        fontSize:'12px', fill:'#ff4500', fontFamily:'Courier New'
+      }).setOrigin(0.5);
     }
+    // Etiqueta visual P1
+    this.txtP1label = this.add.text(150,330,'P1',{
+      fontSize:'12px', fill:'#00e5ff', fontFamily:'Courier New'
+    }).setOrigin(0.5);
 
-   
+    // ── Controles P1 ────────────────────────────────────────
     this.cursors  = this.input.keyboard.createCursorKeys();
     this.fireP1   = this.input.keyboard.addKey('Z');
 
-   
+    // ── Grupos ──────────────────────────────────────────────
     this.lasersP1  = this.physics.add.group();
     this.lasersP2  = this.physics.add.group();
     this.enemigos  = this.physics.add.group();
     this.explosiones = this.add.group();
 
-   
+    // ── Spawn de enemigos TIE (CPU) ──────────────────────────
     this.time.addEvent({ delay:2000, callback:this.spawnEnemigo, callbackScope:this, loop:true });
 
-    
+    // ── HUD ─────────────────────────────────────────────────
     this.txtScore  = this.add.text(16,16,'Puntos: 0',{ fontSize:'18px', fill:'#fff', fontFamily:'Courier New' });
     this.txtTimer  = this.add.text(400,16,'60s',{ fontSize:'18px', fill:'#FFE81F', fontFamily:'Courier New' }).setOrigin(0.5,0);
     this.txtDSHP   = this.add.text(650,16,'Estrella ★★★★★',{ fontSize:'14px', fill:'#ff4444', fontFamily:'Courier New' });
 
-    
+    // barras de vida (canvas dinámicos)
     this.sprHP1 = this.add.image(90,580,'espacio').setAlpha(0); // placeholder
     this.add.text(16,568,'P1',{ fontSize:'13px', fill:'#00e5ff', fontFamily:'Courier New' });
     if (this.numJugadores===2) {
@@ -286,7 +383,7 @@ class GameScene extends Phaser.Scene {
     }
     this.actualizarBarrasHP();
 
-    
+    // ── Colisiones ──────────────────────────────────────────
     this.physics.add.overlap(this.lasersP1, this.enemigos,   this.laserHitEnemigo,  null, this);
     this.physics.add.overlap(this.lasersP1, this.deathStar,  this.laserHitDeathStar,null, this);
     this.physics.add.overlap(this.enemigos, this.p1,         this.enemigoHitJugador,null, this);
@@ -297,7 +394,7 @@ class GameScene extends Phaser.Scene {
       this.physics.add.overlap(this.enemigos, this.p2,        this.enemigoHitJugador,null, this);
     }
 
-    
+    // ── Timer cuenta regresiva ───────────────────────────────
     this.tiempoRestante = 60;
     this.time.addEvent({ delay:1000, callback:()=>{
       if (this.juegoTerminado) return;
@@ -311,23 +408,30 @@ class GameScene extends Phaser.Scene {
   update(time) {
     if (this.juegoTerminado) return;
 
-   
+    // Scroll fondo
     this.fondo.tilePositionX += 2;
 
-   
-    this.p1.setVelocity(0);
-    if (this.cursors.left.isDown)  this.p1.setVelocityX(-280);
-    if (this.cursors.right.isDown) this.p1.setVelocityX(280);
-    if (this.cursors.up.isDown)    this.p1.setVelocityY(-280);
-    if (this.cursors.down.isDown)  this.p1.setVelocityY(280);
+    // Etiquetas siguen a las naves
+    if (this.txtP1label && this.p1 && this.p1.active)
+      this.txtP1label.setPosition(this.p1.x, this.p1.y + 30);
+    if (this.txtP2 && this.p2 && this.p2.active)
+      this.txtP2.setPosition(this.p2.x, this.p2.y + 30);
 
-    // Disparo P1 (cadencia limitada)
-    if (this.fireP1.isDown && time - this.p1.lastShot > 300) {
-      this.disparar(this.p1, this.lasersP1, 'laser1', 500);
-      this.p1.lastShot = time;
+    // ── Movimiento P1 (solo si sigue vivo) ───────────────────
+    if (this.p1 && this.p1.active) {
+      this.p1.setVelocity(0);
+      if (this.cursors.left.isDown)  this.p1.setVelocityX(-280);
+      if (this.cursors.right.isDown) this.p1.setVelocityX(280);
+      if (this.cursors.up.isDown)    this.p1.setVelocityY(-280);
+      if (this.cursors.down.isDown)  this.p1.setVelocityY(280);
+
+      if (this.fireP1.isDown && time - this.p1.lastShot > 300) {
+        this.disparar(this.p1, this.lasersP1, 'laser1', 500);
+        this.p1.lastShot = time;
+      }
     }
 
-    
+    // ── Movimiento P2 (solo en modo 2 jugadores y si vive) ───
     if (this.numJugadores===2 && this.p2 && this.p2.active) {
       this.p2.setVelocity(0);
       if (this.teclasP2.left.isDown)  this.p2.setVelocityX(-280);
@@ -335,45 +439,46 @@ class GameScene extends Phaser.Scene {
       if (this.teclasP2.up.isDown)    this.p2.setVelocityY(-280);
       if (this.teclasP2.down.isDown)  this.p2.setVelocityY(280);
 
+      // P2 también dispara hacia la derecha (ambos atacan la Death Star)
       if (this.teclasP2.fire.isDown && time - this.p2.lastShot > 300) {
-        this.disparar(this.p2, this.lasersP2, 'laser2', -500);
+        this.disparar(this.p2, this.lasersP2, 'laser2', 500);
         this.p2.lastShot = time;
       }
     }
 
-   
+    // Destruir láseres fuera de pantalla
     [this.lasersP1, this.lasersP2].forEach(grupo => {
       grupo.children.iterate(l => { if(l && (l.x>820||l.x<-20)) l.destroy(); });
     });
 
-    
+    // Destruir enemigos fuera de pantalla
     this.enemigos.children.iterate(e => { if(e && e.x < -60) e.destroy(); });
 
-    
-    if (this.deathStar.x < 200) {
+    // Verificar si la Estrella llegó al centro
+    if (this.deathStar && this.deathStar.active && this.deathStar.x < 200) {
       this.terminarJuego('pierde','¡El Imperio ganó!\nLa Estrella de la Muerte llegó');
     }
   }
 
-  
+  // ── Spawn enemigo TIE ───────────────────────────────────
   spawnEnemigo() {
     if (this.juegoTerminado) return;
     const y = Phaser.Math.Between(60, 540);
-    const e = this.enemigos.create(820, y, 'tie').setScale(1.4);
+    const e = this.enemigos.create(820, y, 'tie_enemy').setScale(1.4);
     e.setVelocityX(Phaser.Math.Between(-180,-100));
     e.hp = 1;
   }
 
-  
+  // ── Disparo ─────────────────────────────────────────────
   disparar(jugador, grupo, textura, velX) {
     const laser = grupo.create(jugador.x + (velX>0?30:-30), jugador.y, textura);
     laser.setVelocityX(velX);
     laser.setScale(1.2);
-    
+    // sonido sintético (AudioContext)
     this.sonidoLaser();
   }
 
-  
+  // ── Impacto láser → enemigo ─────────────────────────────
   laserHitEnemigo(laser, enemigo) {
     laser.destroy();
     enemigo.hp--;
@@ -385,7 +490,7 @@ class GameScene extends Phaser.Scene {
     }
   }
 
- 
+  // ── Impacto láser → Estrella de la Muerte ──────────────
   laserHitDeathStar(laser, ds) {
     laser.destroy();
     this.deathStarHP--;
@@ -401,7 +506,7 @@ class GameScene extends Phaser.Scene {
     }
   }
 
- 
+  // ── Enemigo toca jugador ─────────────────────────────────
   enemigoHitJugador(enemigo, jugador) {
     this.crearExplosion(enemigo.x, enemigo.y);
     enemigo.destroy();
@@ -420,7 +525,7 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-
+  // ── Animación explosión ─────────────────────────────────
   crearExplosion(x, y, escala=1.5) {
     let frame = 0;
     const img = this.add.image(x,y,'exp0').setScale(escala);
@@ -432,7 +537,7 @@ class GameScene extends Phaser.Scene {
     this.sonidoExplosion();
   }
 
-  
+  // ── Barras de vida (canvas dinámicos) ────────────────────
   actualizarBarrasHP() {
     const W=120, H=14;
     // P1
@@ -453,7 +558,7 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  
+  // ── Sonidos sintéticos (Web Audio API) ───────────────────
   sonidoLaser() {
     try {
       const ac = new (window.AudioContext||window.webkitAudioContext)();
@@ -483,7 +588,7 @@ class GameScene extends Phaser.Scene {
     } catch(e){}
   }
 
-  
+  // ── Fin del juego ────────────────────────────────────────
   terminarJuego(resultado, mensaje) {
     if (this.juegoTerminado) return;
     this.juegoTerminado = true;
@@ -507,7 +612,9 @@ class GameScene extends Phaser.Scene {
   }
 }
 
-
+// ============================================================
+//  CONFIGURACIÓN PHASER
+// ============================================================
 const config = {
   type: Phaser.AUTO,
   width: 800,
